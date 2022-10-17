@@ -42,7 +42,7 @@ class R2Physics(BallBallPhysics):
 
     def force_bb(self, balli, ballj):
         # Get the direction of the force
-        r = balls[i].position - balls[j].position
+        r = balli.position - ballj.position
         
         # r^2 = (x1-x2)^2 + (y1-y2)^2
         r2 = np.dot(r, r)
@@ -51,7 +51,7 @@ class R2Physics(BallBallPhysics):
         rhat = r / np.sqrt(r2)
         
         # Force (from descendant classes)
-        return self.force_r2_coeff(balls[i], balls[j]) * rhat / r2
+        return self.force_r2_coeff(balli, ballj) * rhat / r2
 
 class Charge(R2Physics):
     """Calculates the electrostatic force between two charged particles"""
