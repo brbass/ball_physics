@@ -52,7 +52,6 @@ class Box:
         for d in range(2):
             self.offsets[d][d] = self.upper[d].origin[d] - self.lower[d].origin[d]
             self.offsets[d+2][d] = -self.offsets[d][d]
-        print(self.offsets)
         return
 
     def limits(self, d):
