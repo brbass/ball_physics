@@ -2,8 +2,6 @@ from Ball import Ball
 from Physics import Gravity
 from Simulation import Simulation
 
-import numpy as np
-
 def getSolarSystem(randomize_position = False,
                    normalize_sizes = True,
                    size_multiplier = 5.0e2):
