@@ -19,6 +19,46 @@ class BallEnvironmentPhysics(Physics):
             forces[i][:] += self.force_be(balls[i])
         return
     
+class ConstantAcceleration(BallEnvironmentPhysics):
+    """Adds a constant acceleration like gravity"""
+    def __init__(self, acceleration = [0.0, -9.81]):
+        # Set by default to gravitational constant, https://en.wikipedia.org/wiki/Gravity_of_Earth
+        self.acceleration = np.array(acceleration) # m / s^2 
+        return
+
+    def force_be(self, balli):
+        return self.acceleration * balli.mass
+
+class ConstantElectromagneticField(BallEnvironmentPhysics):
+    """Adds a background electromagnetic field"""
+    def __init__(self,
+                 E = [0.0, 0.0],
+                 B = 1.0): 
+        self.E = E # m kg / (s^3 A)
+        self.B = B # kg / (s^2 A)
+        return
+
+    def force_be(self, balli):
+        v_cross_B = self.B * np.array([balli.velocity[1], -balli.velocity[0]])
+        return balli.charge * (self.E + v_cross_B)
+
+class Drag(BallEnvironmentPhysics):
+    """Adds drag for problems where velocities would otherwise increase forever"""
+    def __init__(self,
+                 linear = 0.0,
+                 quadratic = 0.0001):
+        self.linear = linear
+        self.quadratic = quadratic
+        return
+
+    def force_be(self, balli):
+        velocity_mag = np.linalg.norm(balli.velocity)
+        if velocity_mag < 1.0e-20:
+            return np.zeros_like(balli.velocity)
+        direction = -balli.velocity / velocity_mag
+        return direction * velocity_mag * (self.linear + velocity_mag * self.quadratic)
+        
+    
 class BallBallPhysics(Physics):
     """Base class for physics involving the interactions of two balls"""
     
@@ -59,7 +99,7 @@ class Charge(R2Physics):
     def __init__(self):
         # Coulomb constant
         # https://en.wikipedia.org/wiki/Coulomb_constant
-        self.k = 8.9875517921e9 # kg * m^3 * s^-4 * A^-2
+        self.k = 8.9875517921e9 # kg m^3 s^-4 A^-2
         return
     
     def force_r2_coeff(self, balli, ballj):
@@ -72,23 +112,13 @@ class Gravity(R2Physics):
     def __init__(self):
         # Gravitational constant
         # https://en.wikipedia.org/wiki/Gravitational_constant
-        self.G = 6.67430e-11 # N * m^2 * kg^-2
+        self.G = 6.67430e-11 # N m^2 kg^-2
         return
 
     def force_r2_coeff(self, balli, ballj):
         # F = -G * m1 * m2 * rhat / r^2
         # https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation#Vector_form
         return -self.G * balli.mass * ballj.mass
-
-class ConstantAcceleration(BallEnvironmentPhysics):
-    """Adds a constant acceleration like gravity"""
-    def __init__(self, acceleration = [0.0, -9.81]):
-        # Set by default to gravitational constant, https://en.wikipedia.org/wiki/Gravity_of_Earth
-        self.acceleration = np.array(acceleration) # m / s^2 
-        return
-
-    def force_be(self, balli):
-        return self.acceleration * balli.mass
 
 class Collision(BallBallPhysics):
     """Calculates collision between balls"""

@@ -6,22 +6,33 @@ class Simulation:
     def __init__(self,
                  balls,
                  physics,
-                 box = None):
+                 box = None,
+                 limits = None):
+        # Input data
         self.balls = balls
         self.physics = physics
         self.box = box
-        
+        self.limits = limits
+
+        # Time stepping options
         self.time = 0.0
         self.time_step = 1.0
         self.num_time_steps = 1000
 
+        # Minimum and maximum delta velocity for the time step
+        self.min_dv = 0.0
+        self.max_dv = np.inf
+
+        # Start up the visualization
         self.initialize_visualization()
-        
+
         return
 
     def run(self):
         num_balls = len(self.balls)
         dimension = 2
+        min_dv = np.inf
+        max_dv = 0.0
         for s in range(self.num_time_steps):
             print("step: {}, time: {}, time step: {}".format(s, self.time, self.time_step))
 
@@ -41,12 +52,22 @@ class Simulation:
                 
                 # Increase the velocity
                 # v = v0 + dt * a
-                b.velocity += self.time_step * acceleration
+                dv = self.time_step * acceleration
+                b.velocity += dv
 
                 # Increase the position
                 # x = x0 + dt * v
                 self.update_position(b)
                 # b.position += self.time_step * b.velocity
+                
+                # Adjust the time step, if needed
+                dvmag = np.linalg.norm(dv)
+                min_dv = min(min_dv, dvmag)
+                max_dv = max(max_dv, dvmag)
+                if (min_dv < self.min_dv):
+                    self.time_step *= 2.0
+                elif max_dv > self.max_dv:
+                    self.time_step *= 0.5
                 
             # Plot the new state
             self.update_visualization()
@@ -75,18 +96,22 @@ class Simulation:
         return [np.amin(pos)- radius, np.amax(pos)+ radius]
     
     def initialize_visualization(self):
-        self.fig, self.ax = plt.subplots()
+        plt.style.use('dark_background')
+        self.fig, self.ax = plt.subplots(dpi=150)
         self.update_visualization()
         plt.show(block=False)
         return
     
     def update_visualization(self):
         self.ax.clear()
-        self.patches = [plt.Circle(b.position, b.radius) for b in self.balls]
-        self.collection = mc.PatchCollection(self.patches)
+        self.patches = [plt.Circle(b.position, b.radius, color=b.color) for b in self.balls]
+        self.collection = mc.PatchCollection(self.patches, match_original=True)
         self.ax.add_collection(self.collection)
 
-        if self.box is not None:
+        if self.limits is not None:
+            self.ax.set_xlim(self.limits[0])
+            self.ax.set_ylim(self.limits[1])
+        elif self.box is not None:
             self.ax.set_xlim(self.box.limits(0))
             self.ax.set_ylim(self.box.limits(1))
         else:

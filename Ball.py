@@ -5,8 +5,10 @@ class Ball:
                  position = [0.0, 0.0],
                  velocity = [0.0, 0.0],
                  mass = 1.0,
-                 radius = 1.0,
-                 charge = 0.0):
+                 radius = 0.05,
+                 charge = 0.0,
+                 color = "#2b8cbe",
+                 name = "none"):
         # Where is the ball?
         self.position = np.array(position)
         
@@ -24,6 +26,12 @@ class Ball:
 
         # Forces on the ball
         self.force = 0.0
+
+        # Color of ball for plotting
+        self.color = color
+
+        # Name of ball, if desired
+        self.name = name
         
         return
 
@@ -39,7 +47,8 @@ class Ball:
         radius_mult = np.random.uniform(1.0 / radius_range, 1.0)
         self.mass = max_mass * radius_mult ** 3
         self.radius = max_radius * radius_mult
-        self.charge = -1 if np.random.randint(0, 2) == 0 else 1
+        self.charge = -1.0e-5 if np.random.randint(0, 2) == 0 else 1.0e-5
+        self.color = np.random.rand(3)
         return
 
         
