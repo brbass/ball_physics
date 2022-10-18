@@ -47,7 +47,7 @@ balls = getSolarSystem()
 physics = [Gravity()]
 
 # Set the limits of the plot to be just outside the chosen planet
-outer_lims = "mars"
+outer_lims = "pluto"
 outer_index = -1
 for i, b in enumerate(balls):
     if b.name == outer_lims:
