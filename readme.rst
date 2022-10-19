@@ -46,7 +46,7 @@ This exercise creates a ball bouncing about a box.
 5. Create a simulation and set the time step to 0.02.
 6. Run the simulation.
 
-If you need help, look at the example in BouncyBalls.py and try to change it as listed above. If you get really stuck, the solution is in `SingleBallExercise.py`.
+If you need help, look at the example in BouncyBalls.py and try to change it as listed above. If you get really stuck, the solution is in ``SingleBallExercise.py``.
 
 Some extensions for this exercise:
 - Add additional balls.
@@ -84,7 +84,7 @@ Do the following to create the input script:
 3. Create a simulation. Set the limits for plotting to be just larger than the position of tatooine [[-position, position], [-position, position]]. Set the time step to 1 hour (3600 seconds!). If you want to simulate a Tatooine year, set the number of time steps to be 4380. Set simulation.visualization_timestep to something between 1 (slow, lots of frames) and 100 (fast, few frames).
 4. Run the simulation.
 
-For help, look at the solar system example. You probably won't need the getSolarSystem function here, as there are only three bodies, but much of the rest should be the same. If you get really stuck, look at `TatooineExercise.py`.
+For help, look at the solar system example. You probably won't need the getSolarSystem function here, as there are only three bodies, but much of the rest should be the same. If you get really stuck, look at ``TatooineExercise.py``.
 
 Extensions:
 - The orbit of Tatooine is pretty irregular, so Luke is going to be fried before he gets the chance to save the galaxy. That means our initial velocity wasn't high enough and that the website has betrayed us! Try increasing the initial velocity of Tatooine to keep the orbit more regular.
