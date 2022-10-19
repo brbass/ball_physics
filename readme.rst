@@ -12,7 +12,7 @@ The first example is the solar system, in ``SolarSystem.py``. The radii for that
 
 ``python3 SolarSystem.py``
 
-The second example is a set of bouncy balls. It includes gravity pulling the balls straight down and collision between the balls. Note that no energy is lost in collisions, so eventually the added energy from gravity will make the balls go very fast!
+The second example is a set of bouncy balls. It includes gravity pulling the balls straight down and collision between the balls. The kinetic energy will go up and down, but the total energy (gravitational potential plus kinetic) should stay the same.
 
 ``python3 BouncyBalls.py``
 
