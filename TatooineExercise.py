@@ -29,7 +29,8 @@ lim = 2.1 * balls[-1].position[0]
 limits = [[-lim, lim], [-lim, lim]]
 simulation = Simulation(balls, physics, limits=limits)
 simulation.time_step = 1.0 * 3600.0
-simulation.num_time_steps = 3504 * 10
-simulation.visualization_step = 100 # set to 10 to see the suns rotate
+simulation.num_time_steps = 3504 * 10 + 1 # 10 years
+simulation.visualization_step = 50 # set to 5 to see the suns rotate or 100 to get through many years quickly
+simulation.print_step = 250
 
 simulation.run()

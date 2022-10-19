@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This is a simple set of physics packages that work on balls, written for beginning programmers to get some experience with physics simulations. Performance isn't stressed; the algorithms for gravity, collision, and electric charge are all N^2 for the number of balls N.
+This is a simple set of physics packages that work on balls, written for beginning programmers to get some experience with physics simulations. Performance isn't stressed; the algorithms for gravity, collision, and electric charge are all N^2 for the number of balls N. The visualization is usually the bottleneck. 
 
 To run the code, create a list of balls, a list of physics packages, optionally a bounding box, and then a simulation. By default, all the units are SI. 
 
@@ -77,6 +77,6 @@ Things to think about:
 - The orbit of Tatooine changes significantly over the course of the simulation, moving far closer to the suns than we started off with. That means our initial velocity wasn't high enough, meaning that the website has betrayed us! 
 
 Extensions:
-- Subtract 
-- Try increasing the time step to 4 hours to see what happens when we try to move the suns too quickly. Turn simulation.visualization_step to 1 for this, as it happens quickly! 
+- Subtract around 1.2e4 m/s from all the y components of the velocity to keep the system from moving upward. This happens because the center of mass of the system is moving upwards. 
+- Try increasing the time step to 4 hours to see what happens when we try to move the suns too quickly. Turn simulation.visualization_step to 1 to see this, as it happens quickly! 
 - Add drag physics to the problem to simulate the suns and planet continually running into death stars (try a quadratic drag coefficient of 1.0e16). Why does the planet essentially stop and the suns keep rotating?

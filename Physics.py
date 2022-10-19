@@ -2,6 +2,9 @@ import numpy as np
 
 class Physics:
     """Base class for all physics"""
+    
+    def __init__(self):
+        self.physics_time = 0.0
 
     def pre_step_update(self, balls):
         """This runs before the forces are calculated; defaults to doing nothing"""
@@ -9,6 +12,10 @@ class Physics:
 
 class BallEnvironmentPhysics(Physics):
     """Base class for physics involving the interaction of a ball with its environment"""
+    
+    def __init__(self):
+        super(BallEnvironmentPhysics, self).__init__()
+        return
     
     def add_force(self,
                   balls,
@@ -21,9 +28,12 @@ class BallEnvironmentPhysics(Physics):
     
 class ConstantAcceleration(BallEnvironmentPhysics):
     """Adds a constant acceleration like gravity"""
+    
     def __init__(self, acceleration = [0.0, -9.81]):
+        super(ConstantAcceleration, self).__init__()
+        
         # Set by default to gravitational constant, https://en.wikipedia.org/wiki/Gravity_of_Earth
-        self.acceleration = np.array(acceleration) # m / s^2 
+        self.acceleration = np.array(acceleration) # m / s^2
         return
 
     def force_be(self, balli):
@@ -31,9 +41,11 @@ class ConstantAcceleration(BallEnvironmentPhysics):
 
 class ConstantElectromagneticField(BallEnvironmentPhysics):
     """Adds a background electromagnetic field"""
+    
     def __init__(self,
                  E = [0.0, 0.0],
                  B = 1.0): 
+        super(ConstantElectromagneticField, self).__init__()
         self.E = E # m kg / (s^3 A)
         self.B = B # kg / (s^2 A)
         return
@@ -44,9 +56,11 @@ class ConstantElectromagneticField(BallEnvironmentPhysics):
 
 class Drag(BallEnvironmentPhysics):
     """Adds drag for problems where velocities would otherwise increase forever"""
+    
     def __init__(self,
                  linear = 0.0,
                  quadratic = 0.0001):
+        super(Drag, self).__init__()
         self.linear = linear
         self.quadratic = quadratic
         return
@@ -60,6 +74,10 @@ class Drag(BallEnvironmentPhysics):
     
 class BallBallPhysics(Physics):
     """Base class for physics involving the interactions of two balls"""
+    
+    def __init__(self):
+        super(BallBallPhysics, self).__init__()
+        return
     
     def add_force(self,
                   balls,
@@ -78,6 +96,10 @@ class BallBallPhysics(Physics):
     
 class R2Physics(BallBallPhysics):
     """Base class for charge and gravity physics"""
+    
+    def __init__(self):
+        super(R2Physics, self).__init__()
+        return
 
     def force_bb(self, balli, ballj):
         # Get the direction of the force
@@ -96,6 +118,8 @@ class Charge(R2Physics):
     """Calculates the electrostatic force between two charged particles"""
     
     def __init__(self):
+        super(Charge, self).__init__()
+        
         # Coulomb constant
         # https://en.wikipedia.org/wiki/Coulomb_constant
         self.k = 8.9875517921e9 # kg m^3 s^-4 A^-2
@@ -108,7 +132,10 @@ class Charge(R2Physics):
     
 class Gravity(R2Physics):
     """Calculates the gravitational force between two objects"""
+    
     def __init__(self):
+        super(Gravity, self).__init__()
+        
         # Gravitational constant
         # https://en.wikipedia.org/wiki/Gravitational_constant
         self.G = 6.67430e-11 # N m^2 kg^-2
@@ -125,6 +152,7 @@ class Collision(BallBallPhysics):
     def __init__(self,
                  evolve_spring_constant = False,
                  spring_constant = 1.e5):
+        super(Collision, self).__init__()
         self.evolve_spring_constant = evolve_spring_constant
         self.spring_constant = spring_constant # kg / s^2
         return

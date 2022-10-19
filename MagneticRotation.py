@@ -19,7 +19,8 @@ simulation = Simulation(balls, physics,
                         limits=[[-lim, lim],
                                 [-0.5 * lim, 1.5 * lim]])
 simulation.time_step = 0.2
-simulation.num_time_steps = 1000
+simulation.num_time_steps = 1001
 simulation.max_dv = 1.0e10
+simulation.visualization_step = 5
 
 simulation.run()

@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import collections as mc
+import time
 
 class Simulation:
     def __init__(self,
@@ -23,15 +24,23 @@ class Simulation:
         self.min_dv = 0.0
         self.max_dv = np.inf
 
-        # How often we update the visualization
+        # How often we update the visualization and print info
         self.visualization_step = 1
+        self.print_step = 20
 
         # Initialize the kinetic energy
         self.update_kinetic_energy()
+
+        # Track the time to do visualizations
+        self.physics_time = 0.0
+        self.visualization_time = 0.0
         
         # Start up the visualization
         self.initialize_visualization()
 
+        # Print starting message
+        self.print_welcome()
+        
         return
 
     def run(self):
@@ -40,8 +49,12 @@ class Simulation:
         min_dv = np.inf
         max_dv = 0.0
         for s in range(self.num_time_steps):
-            print("step: {:5}   time: {:8.3g}   time step: {:8.3g}   kinetic energy: {:8.3e}".format(s, self.time, self.time_step, self.kinetic_energy))
-
+            if s % self.print_step == 0:
+                print("step: {:5}   time: {:8.3g}   time step: {:8.3g}   kinetic energy: {:8.3e}".format(s, self.time, self.time_step, self.kinetic_energy))
+            
+            # Start our timer
+            timer = time.perf_counter()
+            
             # Prepare things before calculating the forces
             for p in self.physics:
                 p.pre_step_update(self.balls)
@@ -49,7 +62,9 @@ class Simulation:
             # Get the forces on each ball
             forces = np.zeros((num_balls, dimension))
             for p in self.physics:
+                physics_timer = time.perf_counter()
                 p.add_force(self.balls, forces)
+                p.physics_time += time.perf_counter() - physics_timer
             for i, b in enumerate(self.balls):
                 # Calculate the acceleration from the force
                 # F = m * a, so a = F / m
@@ -77,6 +92,9 @@ class Simulation:
                     
             # Update the kinetic energy
             self.update_kinetic_energy()
+
+            # Add to our time
+            self.physics_time += time.perf_counter() - timer
             
             # Plot the new state
             if (s + 1) % self.visualization_step == 0:
@@ -84,6 +102,7 @@ class Simulation:
             
             # Increment the time
             self.time += self.time_step
+        self.print_timers()
         plt.show(block=True)
         return
 
@@ -105,7 +124,17 @@ class Simulation:
         for b in self.balls:
             self.kinetic_energy += 0.5 * b.mass * np.dot(b.velocity, b.velocity)
         return
-            
+
+    def print_timers(self):
+        print()
+        print("------------")
+        print("Timing info")
+        print("------------")
+        print("Physics: ", self.physics_time)
+        for p in self.physics:
+            print("    {}: ".format(p.__class__.__name__), p.physics_time)
+        print("Visualization: ", self.visualization_time)
+    
     def get_lim(self, d):
         pos = [b.position[d] for b in self.balls]
         radius = np.amax([b.radius for b in self.balls])
@@ -119,6 +148,8 @@ class Simulation:
         return
     
     def update_visualization(self):
+        timer = time.perf_counter()
+        
         self.ax.clear()
         self.patches = [plt.Circle(b.position, b.radius, color=b.color) for b in self.balls]
         self.collection = mc.PatchCollection(self.patches, match_original=True)
@@ -140,4 +171,31 @@ class Simulation:
         plt.draw()
         plt.pause(1.0e-12)
 
+        self.visualization_time += time.perf_counter() - timer
+
+        return
+
+    def print_welcome(self):
+        print(" oooooooooooooooooooooooooooooo")
+        print(" oooooo  Ball Simulator  oooooo")
+        print(" oooooooooooooooooooooooooooooo")
+        
+        # Print glorious art to inspire the user (https://www.asciiart.eu/mythology/unicorns)
+        print("""
+               |))    |))
+ .             |  )) /   ))
+ \\   ^ ^      |    /      ))
+  \\(((  )))   |   /        ))
+   / G    )))  |  /        ))
+  |o  _)   ))) | /       )))
+   --' |     ))`/      )))
+    ___|              )))
+   / __\             ))))`()))
+  /\@   /             `(())))
+  \/   /  /`_______/\   \  ))))
+       | |          \ \  |  )))
+       | |           | | |   )))
+       |_@           |_|_@    ))
+       /_/           /_/_/""")
+        print()
         return
