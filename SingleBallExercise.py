@@ -17,5 +17,6 @@ box = Box(0,1,0,1, reflect=True)
 
 simulation = Simulation(balls, physics, box)
 simulation.time_step = 0.02
+simulation.visualization_step = 2
 
 simulation.run()

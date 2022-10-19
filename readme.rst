@@ -73,10 +73,8 @@ Tatooine 5.00e6  4.11e4  2.93e24  1.65e11
 
 For help, look at the solar system example. You probably won't need the getSolarSystem function here, as there are only three bodies, but much of the rest should be the same. 
 
-Things to think about:
-- The orbit of Tatooine changes significantly over the course of the simulation, moving far closer to the suns than we started off with. That means our initial velocity wasn't high enough, meaning that the website has betrayed us! 
-
 Extensions:
+- The orbit of Tatooine is pretty irregular, so Luke is going to be fried before he gets the chance to save the galaxy. That means our initial velocity wasn't high enough and that the website has betrayed us! Try increasing the initial velocity of Tatooine to keep the orbit more regular.
 - Subtract around 1.2e4 m/s from all the y components of the velocity to keep the system from moving upward. This happens because the center of mass of the system is moving upwards. 
 - Try increasing the time step to 4 hours to see what happens when we try to move the suns too quickly. Turn simulation.visualization_step to 1 to see this, as it happens quickly! 
 - Add drag physics to the problem to simulate the suns and planet continually running into death stars (try a quadratic drag coefficient of 1.0e16). Why does the planet essentially stop and the suns keep rotating?
