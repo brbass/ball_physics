@@ -8,13 +8,22 @@ To run the code, create a list of balls, a list of physics packages, optionally 
 Examples
 ========
 
+Example 1: Solar system
+-----------------------
+
 The first example is the solar system, in ``SolarSystem.py``. The radii for that problem are significantly normalized so that we can actually see all the planets.
 
 ``python3 SolarSystem.py``
 
+Example 2: Bouncy balls
+-----------------------
+
 The second example is a set of bouncy balls. It includes gravity pulling the balls straight down and collision between the balls. The kinetic energy will go up and down, but the total energy (gravitational potential plus kinetic) should stay the same.
 
 ``python3 BouncyBalls.py``
+
+Example 3: Magnetic rotation
+----------------------------
 
 The third example is a few electrons and ions floating around in a constant magnetic field.
 
@@ -37,7 +46,9 @@ This exercise creates a ball bouncing about a box.
 5. Create a simulation and set the time step to 0.02.
 6. Run the simulation.
 
-If you need help, look at the example in BouncyBalls.py. Some extensions for this exercise:
+If you need help, look at the example in BouncyBalls.py and try to change it as listed above. If you get really stuck, the solution is in `SingleBallExercise.py`.
+
+Some extensions for this exercise:
 - Add additional balls.
 - Add collision physics.
 - Add drag to simulate the balls running into air (try a linear coefficient of 0.5 and a quadratic coefficient of 0.0). What changes about the simulation?
@@ -66,12 +77,14 @@ Tatoo II 7.10e8 -9.68e4  9.09e29  5.48e9
 Tatooine 5.00e6  4.11e4  2.93e24  1.65e11
 ======== ====== ======== ======= ========
 
+Do the following to create the input script:
+
 1. Create balls representing the three bodies. Put them in a line, meaning that the y component should be zero (e.g. position = [-1.62e9, 0.0]). The velocities should be in the y direction (e.g. velocity = [0.0, 9.68e4]). Make sure one of the suns has a negative y velocity so they are spinning around each other. The radii don't matter to the gravity calculation, so make them relatively big so you can see them (maybe three times larger than listed for the suns and fifty times larger for Tatooine).
 2. Create gravity physics.
 3. Create a simulation. Set the limits for plotting to be just larger than the position of tatooine [[-position, position], [-position, position]]. Set the time step to 1 hour (3600 seconds!). If you want to simulate a Tatooine year, set the number of time steps to be 4380. Set simulation.visualization_timestep to something between 1 (slow, lots of frames) and 100 (fast, few frames).
 4. Run the simulation.
 
-For help, look at the solar system example. You probably won't need the getSolarSystem function here, as there are only three bodies, but much of the rest should be the same. 
+For help, look at the solar system example. You probably won't need the getSolarSystem function here, as there are only three bodies, but much of the rest should be the same. If you get really stuck, look at `TatooineExercise.py`.
 
 Extensions:
 - The orbit of Tatooine is pretty irregular, so Luke is going to be fried before he gets the chance to save the galaxy. That means our initial velocity wasn't high enough and that the website has betrayed us! Try increasing the initial velocity of Tatooine to keep the orbit more regular.
