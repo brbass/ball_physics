@@ -57,7 +57,6 @@ class Drag(BallEnvironmentPhysics):
             return np.zeros_like(balli.velocity)
         direction = -balli.velocity / velocity_mag
         return direction * velocity_mag * (self.linear + velocity_mag * self.quadratic)
-        
     
 class BallBallPhysics(Physics):
     """Base class for physics involving the interactions of two balls"""

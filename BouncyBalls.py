@@ -13,7 +13,8 @@ physics = [Collision(), ConstantAcceleration()]
 box = Box(0.0, 1.0, 0.0, 1.0, reflect=True)
 
 simulation = Simulation(balls, physics, box)
-simulation.time_step = 0.0015
+simulation.time_step = 0.0005
 simulation.num_time_steps = 1000
+simulation.visualization_step = 5
 
 simulation.run()

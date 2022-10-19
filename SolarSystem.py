@@ -67,6 +67,9 @@ simulation.time_step = 10.0 * 24.0 * 3600.0
 # Set number of time steps equal to the orbital period of Pluto
 simulation.num_time_steps = int(248.0 * 365.0 * 24.0 * 3600.0 / simulation.time_step)
 
+# Visualize less often to speed things up: try setting to 100 days to get through the whole simulation quickly
+simulation.visualization_step  = 10
+
 # Run the simulation!
 simulation.run()
     

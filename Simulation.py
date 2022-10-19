@@ -23,6 +23,9 @@ class Simulation:
         self.min_dv = 0.0
         self.max_dv = np.inf
 
+        # How often we update the visualization
+        self.visualization_step = 1
+
         # Initialize the kinetic energy
         self.update_kinetic_energy()
         
@@ -37,7 +40,7 @@ class Simulation:
         min_dv = np.inf
         max_dv = 0.0
         for s in range(self.num_time_steps):
-            print("step: {:5}   time: {:8.3g}   time step: {:8.3g}   kinetic energy: {:8.3g}".format(s, self.time, self.time_step, self.kinetic_energy))
+            print("step: {:5}   time: {:8.3g}   time step: {:8.3g}   kinetic energy: {:8.3e}".format(s, self.time, self.time_step, self.kinetic_energy))
 
             # Prepare things before calculating the forces
             for p in self.physics:
@@ -76,7 +79,8 @@ class Simulation:
             self.update_kinetic_energy()
             
             # Plot the new state
-            self.update_visualization()
+            if (s + 1) % self.visualization_step == 0:
+                self.update_visualization()
             
             # Increment the time
             self.time += self.time_step
