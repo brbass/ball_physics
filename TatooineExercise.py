@@ -25,7 +25,7 @@ balls = [Ball(position = [-1.62e9, 0.0],
 
 physics = [Gravity()]
 
-lim = 2.1 * balls[-1].position[0]
+lim = 1.1 * balls[-1].position[0]
 limits = [[-lim, lim], [-lim, lim]]
 simulation = Simulation(balls, physics, limits=limits)
 simulation.time_step = 1.0 * 3600.0

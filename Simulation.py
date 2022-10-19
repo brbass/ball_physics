@@ -34,12 +34,14 @@ class Simulation:
         # Track the time to do visualizations
         self.physics_time = 0.0
         self.visualization_time = 0.0
+        self.boundary_time = 0.0
         
         # Start up the visualization
         self.initialize_visualization()
 
         # Print starting message
         self.print_welcome()
+
         
         return
 
@@ -69,7 +71,6 @@ class Simulation:
                 # Calculate the acceleration from the force
                 # F = m * a, so a = F / m
                 acceleration = forces[i][:] / b.mass
-                # print(i, b.position, acceleration)
                 
                 # Increase the velocity
                 # v = v0 + dt * a
@@ -110,9 +111,11 @@ class Simulation:
         dx = ball.velocity * self.time_step
 
         if self.box is not None:
+            timer = time.perf_counter()
             # Make sure to take box collisions into account!
             ball.position, direction = self.box.update_position(ball.position, dx, ball.radius)
             ball.velocity = direction * np.linalg.norm(ball.velocity)
+            self.boundary_time += time.perf_counter() - timer
             return
         
         # No box: do the usual thing
@@ -133,6 +136,7 @@ class Simulation:
         print("Physics: ", self.physics_time)
         for p in self.physics:
             print("    {}: ".format(p.__class__.__name__), p.physics_time)
+        print("    Boundary: ", self.boundary_time)
         print("Visualization: ", self.visualization_time)
     
     def get_lim(self, d):
@@ -143,38 +147,58 @@ class Simulation:
     def initialize_visualization(self):
         plt.style.use('dark_background')
         self.fig, self.ax = plt.subplots(dpi=150)
-        self.update_visualization()
+        self.patches = [plt.Circle(b.position, b.radius, color=b.color) for b in self.balls]
+        self.collection = mc.PatchCollection(self.patches, match_original=True)
+        self.ax.add_collection(self.collection)
+        self.set_limits(True)
         plt.show(block=False)
         return
     
     def update_visualization(self):
         timer = time.perf_counter()
-        
-        self.ax.clear()
-        self.patches = [plt.Circle(b.position, b.radius, color=b.color) for b in self.balls]
-        self.collection = mc.PatchCollection(self.patches, match_original=True)
-        self.ax.add_collection(self.collection)
 
-        if self.limits is not None:
-            self.ax.set_xlim(self.limits[0])
-            self.ax.set_ylim(self.limits[1])
-        elif self.box is not None:
-            self.ax.set_xlim(self.box.limits(0))
-            self.ax.set_ylim(self.box.limits(1))
-        else:
-            self.ax.set_xlim(self.get_lim(0))
-            self.ax.set_ylim(self.get_lim(1))
-        self.ax.set_aspect('equal', adjustable='box')
-        self.ax.set_xlabel("x position (meters)")
-        self.ax.set_ylabel("y position (meters)")
-        
-        plt.draw()
-        plt.pause(1.0e-12)
+        for b, c in zip(self.balls, self.patches):
+            c.center = b.position
+        self.collection.set_paths(self.patches)
+        self.set_limits()
+        self.fig.canvas.flush_events()
+        plt.show(block=False)
+        # plt.pause(0.1)
 
         self.visualization_time += time.perf_counter() - timer
 
         return
 
+    def set_limits(self, first_time = False):
+        dynamic_limits = self.limits is None and self.box is None
+
+        # Set limits
+        if first_time and not dynamic_limits:
+            # These don't change during the simulation
+            if self.limits is not None:
+                self.ax.set_xlim(self.limits[0])
+                self.ax.set_ylim(self.limits[1])
+            elif self.box is not None:
+                self.ax.set_xlim(self.box.limits(0))
+                self.ax.set_ylim(self.box.limits(1))
+        elif dynamic_limits:
+            # This changes each step
+            self.ax.set_xlim(self.get_lim(0))
+            self.ax.set_ylim(self.get_lim(1))
+
+        # Set labels
+        if first_time:
+            self.ax.set_xlabel("x position (meters)")
+            self.ax.set_ylabel("y position (meters)")
+
+        # Set aspect ratio equal
+        if first_time or dynamic_limits:
+            self.ax.set_aspect('equal', adjustable='box')
+            
+        return
+            
+        
+    
     def print_welcome(self):
         print(" oooooooooooooooooooooooooooooo")
         print(" oooooo  Ball Simulator  oooooo")

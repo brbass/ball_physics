@@ -35,7 +35,7 @@ class Plane:
         return direction - 2 * np.dot(direction, self.normal) * self.normal
 
 class Box:
-    """A box with four reflecting boundaries"""
+    """A box with four reflecting or periodic boundaries"""
 
     def __init__(self, left, right, bottom, top, reflect=True):
         self.lower = [Plane(origin = [left, 0.0],

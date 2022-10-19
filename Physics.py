@@ -151,7 +151,7 @@ class Collision(BallBallPhysics):
 
     def __init__(self,
                  evolve_spring_constant = False,
-                 spring_constant = 1.e5):
+                 spring_constant = 1.0e5):
         super(Collision, self).__init__()
         self.evolve_spring_constant = evolve_spring_constant
         self.spring_constant = spring_constant # kg / s^2
