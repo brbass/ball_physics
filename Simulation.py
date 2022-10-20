@@ -50,16 +50,17 @@ class Simulation:
         dimension = 2
         min_dv = np.inf
         max_dv = 0.0
+        print("{:>7} {:>11} {:>11} {:>13}".format("step", "time", "time step", "kin energy"))
         for s in range(self.num_time_steps):
             if s % self.print_step == 0:
-                print("step: {:5}   time: {:8.3g}   time step: {:8.3g}   kinetic energy: {:8.3e}".format(s, self.time, self.time_step, self.kinetic_energy))
+                print("{:7} {:11.4g} {:11.4g} {:13.3e}".format(s, self.time, self.time_step, self.kinetic_energy))
             
             # Start our timer
             timer = time.perf_counter()
             
             # Prepare things before calculating the forces
             for p in self.physics:
-                p.pre_step_update(self.balls)
+                p.pre_step_update(self.balls, self.time_step)
             
             # Get the forces on each ball
             forces = np.zeros((num_balls, dimension))
@@ -128,17 +129,6 @@ class Simulation:
             self.kinetic_energy += 0.5 * b.mass * np.dot(b.velocity, b.velocity)
         return
 
-    def print_timers(self):
-        print()
-        print("------------")
-        print("Timing info")
-        print("------------")
-        print("Physics: ", self.physics_time)
-        for p in self.physics:
-            print("    {}: ".format(p.__class__.__name__), p.physics_time)
-        print("    Boundary: ", self.boundary_time)
-        print("Visualization: ", self.visualization_time)
-    
     def get_lim(self, d):
         pos = [b.position[d] for b in self.balls]
         radius = np.amax([b.radius for b in self.balls])
@@ -197,13 +187,26 @@ class Simulation:
             
         return
             
-        
-    
     def print_welcome(self):
         print(" oooooooooooooooooooooooooooooo")
         print(" oooooo  Ball Simulator  oooooo")
         print(" oooooooooooooooooooooooooooooo")
-        
+        self.print_unicorn()
+        return
+    
+    def print_timers(self):
+        print()
+        print(" ----------------------------- ")
+        print("          Timing info          ")
+        print(" ----------------------------- ")
+        print("Physics: ", self.physics_time)
+        for p in self.physics:
+            print("    {}: ".format(p.__class__.__name__), p.physics_time)
+        print("    Boundary: ", self.boundary_time)
+        print("Visualization: ", self.visualization_time)
+        return
+    
+    def print_unicorn(self):
         # Print glorious art to inspire the user (https://www.asciiart.eu/mythology/unicorns)
         print("""
                |))    |))
@@ -220,6 +223,6 @@ class Simulation:
        | |          \ \  |  )))
        | |           | | |   )))
        |_@           |_|_@    ))
-       /_/           /_/_/""")
-        print()
+       /_/           /_/_/
+        """)
         return

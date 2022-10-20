@@ -6,7 +6,7 @@ class Physics:
     def __init__(self):
         self.physics_time = 0.0
 
-    def pre_step_update(self, balls):
+    def pre_step_update(self, balls, time_step):
         """This runs before the forces are calculated; defaults to doing nothing"""
         return
 
@@ -14,7 +14,7 @@ class BallEnvironmentPhysics(Physics):
     """Base class for physics involving the interaction of a ball with its environment"""
     
     def __init__(self):
-        super(BallEnvironmentPhysics, self).__init__()
+        super().__init__()
         return
     
     def add_force(self,
@@ -30,7 +30,7 @@ class ConstantAcceleration(BallEnvironmentPhysics):
     """Adds a constant acceleration like gravity"""
     
     def __init__(self, acceleration = [0.0, -9.81]):
-        super(ConstantAcceleration, self).__init__()
+        super().__init__()
         
         # Set by default to gravitational constant, https://en.wikipedia.org/wiki/Gravity_of_Earth
         self.acceleration = np.array(acceleration) # m / s^2
@@ -45,7 +45,7 @@ class ConstantElectromagneticField(BallEnvironmentPhysics):
     def __init__(self,
                  E = [0.0, 0.0],
                  B = 1.0): 
-        super(ConstantElectromagneticField, self).__init__()
+        super().__init__()
         self.E = E # m kg / (s^3 A)
         self.B = B # kg / (s^2 A)
         return
@@ -60,7 +60,7 @@ class Drag(BallEnvironmentPhysics):
     def __init__(self,
                  linear = 0.0,
                  quadratic = 0.0001):
-        super(Drag, self).__init__()
+        super().__init__()
         self.linear = linear
         self.quadratic = quadratic
         return
@@ -76,7 +76,7 @@ class BallBallPhysics(Physics):
     """Base class for physics involving the interactions of two balls"""
     
     def __init__(self):
-        super(BallBallPhysics, self).__init__()
+        super().__init__()
         return
     
     def add_force(self,
@@ -98,7 +98,7 @@ class R2Physics(BallBallPhysics):
     """Base class for charge and gravity physics"""
     
     def __init__(self):
-        super(R2Physics, self).__init__()
+        super().__init__()
         return
 
     def force_bb(self, balli, ballj):
@@ -118,7 +118,7 @@ class Charge(R2Physics):
     """Calculates the electrostatic force between two charged particles"""
     
     def __init__(self):
-        super(Charge, self).__init__()
+        super().__init__()
         
         # Coulomb constant
         # https://en.wikipedia.org/wiki/Coulomb_constant
@@ -134,7 +134,7 @@ class Gravity(R2Physics):
     """Calculates the gravitational force between two objects"""
     
     def __init__(self):
-        super(Gravity, self).__init__()
+        super().__init__()
         
         # Gravitational constant
         # https://en.wikipedia.org/wiki/Gravitational_constant
@@ -150,20 +150,27 @@ class Collision(BallBallPhysics):
     """Calculates collision between balls"""
 
     def __init__(self,
-                 evolve_spring_constant = False,
-                 spring_constant = 1.0e5):
-        super(Collision, self).__init__()
+                 evolve_spring_constant = True):
+        super().__init__()
         self.evolve_spring_constant = evolve_spring_constant
-        self.spring_constant = spring_constant # kg / s^2
+        self.spring_constant = 1.0e5 # kg / s^2
         return
 
-    def pre_step_update(self, balls):
+    def pre_step_update(self, balls, time_step):
         if self.evolve_spring_constant:
-            average_mass = np.mean([b.mass for b in balls])
-            max_velocity = np.amax([np.linalg.norm(b.velocity) for b in balls])
-            min_radius = np.amin([b.radius for b in balls])
-
-            self.spring_constant = average_mass * (max_velocity / min_radius) ** 2
+            # # Method from paper, doesn't work very well
+            # average_mass = np.mean([b.mass for b in balls])
+            # max_velocity = np.amax([np.linalg.norm(b.velocity) for b in balls])
+            # min_radius = np.amin([b.radius for b in balls])
+            
+            # self.spring_constant = average_mass * (max_velocity / min_radius) ** 2
+            
+            # My method, works better: limits velocity change (on average) to at most the current velocity
+            velocities = np.array([np.linalg.norm(b.velocity) for b in balls])
+            masses = np.array([b.mass for b in balls])
+            radii = np.array([b.radius for b in balls])
+            constants = velocities * masses / (radii * time_step)
+            self.spring_constant = np.mean(constants)
         return
         
     def force_bb(self, balli, ballj):

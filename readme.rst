@@ -29,6 +29,12 @@ The third example is a few electrons and ions floating around in a constant magn
 
 ``python3 MagneticRotation.py``
 
+Example 4: Bouncy stars
+-----------------------
+
+This represents a bunch of small stars orbiting a big star. All the stars are pretty bouncy. This example shows how to calculate stable orbits and how to calculate proper spring constants given the initial data. 
+
+
 Exercises
 =========
 

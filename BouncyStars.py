@@ -14,6 +14,8 @@ max_radius = 2 * xlim / 40
 
 # Get gravity for velocity calculation
 gravity = Gravity()
+collision = Collision(evolve_spring_constant = True)
+physics = [gravity, collision]
 
 # Generate balls
 balls = [Ball() for i in range(num_balls)]
@@ -39,9 +41,6 @@ for i in range(1, num_balls):
     # Perturb the velocity a bit to make the orbits elliptical
     b.velocity *= np.random.uniform(0.8, 1.2)
 
-# Create collision
-collision = Collision()
-physics = [gravity, collision]
 
 # Bounding box with periodic boundaries
 box = Box(-xboxlim, xboxlim, -xboxlim, xboxlim, reflect=False)
@@ -51,14 +50,6 @@ simulation = Simulation(balls, physics, box)
 simulation.time_step = 20 * 60.0
 simulation.num_time_steps = 1000
 simulation.visualization_step = 2
-
-# Set spring constant so velocity will change at most by the initial velocities each time step
-velocities = np.array([np.linalg.norm(b.velocity) for b in balls])
-masses = np.array([b.mass for b in balls])
-radii = np.array([b.radius for b in balls])
-spring_constants = velocities * masses / (radii * simulation.time_step)
-
-collision.spring_constant = np.mean(spring_constants)
 
 # Run simulation
 simulation.run()

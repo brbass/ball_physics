@@ -5,8 +5,7 @@ from Simulation import Simulation
 import numpy as np
 
 # Create balls representing the planets with their appropriate masses
-def getSolarSystem(randomize_position = False,
-                   normalize_radii = True,
+def getSolarSystem(normalize_radii = True,
                    radius_multiplier = 5.0e2,
                    include_moon = False):
     # From https://nssdc.gsfc.nasa.gov/planetary/factsheet/ and https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
@@ -38,12 +37,16 @@ def getSolarSystem(randomize_position = False,
         # Put the moon around the earth
         bodies[-1].position += bodies[3].position
         bodies[-1].velocity += bodies[3].velocity
+        bodies[-1].radius /= 3
     
     return bodies
 
 
 # Create the balls and include gravity
-balls = getSolarSystem()
+include_moon = True
+radius_mult = 1.0e2 if include_moon else 5.0e2
+balls = getSolarSystem(include_moon = include_moon,
+                       radius_multiplier = radius_mult)
 physics = [Gravity()]
 
 # Set the limits of the plot to be just outside the chosen planet
@@ -61,14 +64,22 @@ limits = [[i * lim for i in [-1, 1]] for j in range(2)]
 # Create the simulation
 simulation = Simulation(balls, physics, limits=limits)
 
-# Set time step to 10 days
-simulation.time_step = 10.0 * 24.0 * 3600.0
+if include_moon:
+    # Set time step to two days so moon stays around earth
+    simulation.time_step = 2.0 * 24.0 * 3600.0
+else:
+    # Set time step to ten days
+    simulation.time_step = 10.0 * 24.0 * 3600.0
 
-# Set number of time steps equal to the orbital period of Pluto
-simulation.num_time_steps = int(248.0 * 365.0 * 24.0 * 3600.0 / simulation.time_step)
+if include_moon:
+    # Set number of time steps so end time is equal to four years
+    simulation.num_time_steps = int(4.0 * 365.0 * 24.0 * 3600.0 / simulation.time_step)
+else:
+    # Set number of time steps so end time is equal to one Pluto year
+    simulation.num_time_steps = int(248.0 * 365.0 * 24.0 * 3600.0 / simulation.time_step)
 
 # Visualize less often to speed things up: try setting to 100 to get through the whole simulation quickly
-simulation.visualization_step  = 10
+simulation.visualization_step = 2 if include_moon else 10
 
 # Run the simulation!
 simulation.run()
