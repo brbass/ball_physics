@@ -97,3 +97,14 @@ Extensions:
 - Subtract around 1.2e4 m/s from all the y components of the velocity to keep the system from moving upward. This happens because the center of mass of the system is moving upwards. 
 - Try increasing the time step to 4 hours to see what happens when we try to move the suns too quickly. Turn simulation.visualization_step to 1 to see this, as it happens quickly! 
 - Add drag physics to the problem to simulate the suns and planet continually running into death stars (try a quadratic drag coefficient of 1.0e16). Why does the planet essentially stop and the suns keep rotating?
+
+Exercise 3: Black Hole
+----------------------
+
+Create a physics package to delete given balls when they hit a black hole. This will exercise class inheritance, list deletion, and more! Here is some help to get started: 
+
+1. Make a physics package that inherits from Gravity and takes as its input a single ball, the black hole.
+2. During the pre_step_update function, make a list of balls that come too close to the black hole. Add the mass of these balls to the black hole and optionally their momentum and volume.
+3. Delete the captured balls from the balls list. The visualization will need to be reinitialized (``simulation.initialize_visualization(True)``) if you add or remove balls. Alternatively, set the mass and radius of the balls to zero and don't reinitialize. 
+
+You may want to start by copying the example in ``BouncyStars.py``, removing collision and the box, and adding the class described above. For the completed exercise, see ``BlackHoleExercise.py``.

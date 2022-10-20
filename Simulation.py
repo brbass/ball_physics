@@ -60,7 +60,9 @@ class Simulation:
             
             # Prepare things before calculating the forces
             for p in self.physics:
+                physics_timer = time.perf_counter()
                 p.pre_step_update(self.balls, self.time_step)
+                p.physics_time += time.perf_counter() - physics_timer
             
             # Get the forces on each ball
             forces = np.zeros((num_balls, dimension))
@@ -134,14 +136,22 @@ class Simulation:
         radius = np.amax([b.radius for b in self.balls])
         return [np.amin(pos)- radius, np.amax(pos)+ radius]
     
-    def initialize_visualization(self):
-        plt.style.use('dark_background')
-        self.fig, self.ax = plt.subplots(dpi=150)
+    def initialize_visualization(self, reinitialize = False):
+        timer = time.perf_counter()
+        
+        if reinitialize:
+            self.ax.clear()
+        else:
+            plt.style.use('dark_background')
+            self.fig, self.ax = plt.subplots(dpi=150)
         self.patches = [plt.Circle(b.position, b.radius, color=b.color) for b in self.balls]
         self.collection = mc.PatchCollection(self.patches, match_original=True)
         self.ax.add_collection(self.collection)
         self.set_limits(True)
         plt.show(block=False)
+        
+        self.visualization_time += time.perf_counter() - timer
+        
         return
     
     def update_visualization(self):

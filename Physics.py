@@ -10,6 +10,10 @@ class Physics:
         """This runs before the forces are calculated; defaults to doing nothing"""
         return
 
+    def add_force(self, balls, forces):
+        """Add forces to the balls; defaults to doing nothing"""
+        return
+
 class BallEnvironmentPhysics(Physics):
     """Base class for physics involving the interaction of a ball with its environment"""
     
