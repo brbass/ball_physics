@@ -41,7 +41,6 @@ class Simulation:
 
         # Print starting message
         self.print_welcome()
-
         
         return
 
@@ -144,11 +143,11 @@ class Simulation:
         else:
             plt.style.use('dark_background')
             self.fig, self.ax = plt.subplots(dpi=150)
+            plt.show(block=False)
         self.patches = [plt.Circle(b.position, b.radius, color=b.color) for b in self.balls]
         self.collection = mc.PatchCollection(self.patches, match_original=True)
         self.ax.add_collection(self.collection)
         self.set_limits(True)
-        plt.show(block=False)
         
         self.visualization_time += time.perf_counter() - timer
         
@@ -161,8 +160,8 @@ class Simulation:
             c.center = b.position
         self.collection.set_paths(self.patches)
         self.set_limits()
+        self.fig.canvas.draw()
         self.fig.canvas.flush_events()
-        plt.show(block=False)
         # plt.pause(0.1)
 
         self.visualization_time += time.perf_counter() - timer
@@ -218,7 +217,7 @@ class Simulation:
     
     def print_unicorn(self):
         # Print glorious art to inspire the user (https://www.asciiart.eu/mythology/unicorns)
-        print("""
+        print(r"""
                |))    |))
  .             |  )) /   ))
  \\   ^ ^      |    /      ))

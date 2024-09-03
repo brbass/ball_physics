@@ -5,7 +5,7 @@ from Simulation import Simulation
 import numpy as np
 
 # Input data
-include_moon = True
+include_moon = False
 normalize_radii = True
 
 # Convenience function
@@ -36,10 +36,10 @@ with open("SolarSystemData.txt") as f:
                           radius = 0.5 * float(data[fields["diameter"]]),
                           color = "#{}".format(data[fields["color"]]),
                           name = name))
-mean_radius = np.mean([b.radius for b in balls if b.name is not "sun"])
+mean_radius = np.mean([b.radius for b in balls if b.name != "sun"])
 for b in balls:
     b.radius *= radius_multiplier
-    if normalize_radii and b.name is not "sun":
+    if normalize_radii and b.name != "sun":
         b.radius = (b.radius + 2 * mean_radius) / 3
         
 # Create the physics
